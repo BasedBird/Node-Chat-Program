@@ -6,7 +6,7 @@ window.onload = function() {
   document.getElementById("message").focus();
 }
 
-webSocket = new WebSocket('ws://45.72.220.8:8324/', 'echo-protocol');
+webSocket = new WebSocket('ws://45.72.220.8/', 'echo-protocol');
 
 webSocket.onopen = (event) => {document.body.write
   checkSignedIn();
@@ -19,8 +19,7 @@ webSocket.addEventListener("message", (event) => {
   else{
     //document.body.innerHTML = document.body.innerHTML + '<br>' + event.data;
     document.getElementById("chat").innerHTML += '<br>' + event.data;
-    document.getElementById("message").value = '';
-    document.getElementById("message").focus();
+    document.getElementById("chat").scrollTop = document.getElementById("chat").scrollHeight;
   }
 });
 
@@ -40,6 +39,8 @@ function bye_button(){
 
 function message_button(){
   webSocket.send('202 ' + document.getElementById('message').value);
+  document.getElementById("message").value = '';
+  document.getElementById("message").focus();
 }
 
 function checkSignedIn(){

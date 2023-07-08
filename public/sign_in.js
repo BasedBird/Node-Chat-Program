@@ -2,7 +2,7 @@ if ( window.history.replaceState ) {
   window.history.replaceState( null, null, window.location.href );
 }
 
-webSocket = new WebSocket('ws://45.72.220.8:8324/', 'echo-protocol');
+webSocket = new WebSocket('ws://45.72.220.8/', 'echo-protocol');
 
 webSocket.onopen = (event) => {
   webSocket.send("Connected");

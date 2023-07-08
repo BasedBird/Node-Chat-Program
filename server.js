@@ -4,11 +4,11 @@ var http = require('http');
 const fs = require('fs')
 
 const _ROOT = "./public/";
-const PORT = 8324;
+const PORT = 80;
 var usernames = new Map();
 
 var server = http.createServer(function(request, response) {
-    console.log((new Date()) + ' Received request for ' + request.url);
+    console.log((new Date()) + ' Received request for ' + request.url + "from " + request.socket.remoteAddress);
     if (request.url == '/'){
       response.writeHead(200, { 'content-type': 'text/html' });
       fs.createReadStream(_ROOT + 'index.html').pipe(response);
