@@ -6,6 +6,7 @@ const fs = require('fs')
 const _ROOT = "./public/";
 const PORT = 80;
 var usernames = new Map();
+var id = 0;
 
 var server = http.createServer(function(request, response) {
     console.log((new Date()) + ' Received request for ' + request.url + "from " + request.socket.remoteAddress);
@@ -57,24 +58,30 @@ wsServer.on('request', function(request) {
     console.log((new Date()) + ' Connection accepted.');
     connection.on('message', function(message) {
         if (message.type === 'utf8') {
-            //connection.sendUTF(message.utf8Data);
-            if (message.utf8Data.split(' ')[0] == '101'){
-              console.log('Received Message From ' + request.socket.remoteAddress + ': ' + message.utf8Data);
-              console.log(usernames.get(request.socket.remoteAddress));
-              usernames.set(request.socket.remoteAddress, message.utf8Data.slice(4));
-              connection.sendUTF(message.utf8Data);
-            }
-            else if (message.utf8Data.split(' ')[0] == '202'){
-              console.log('Received Message From ' + usernames.get(request.socket.remoteAddress) + ': ' + message.utf8Data.slice(4));
-              wsServer.broadcast(usernames.get(request.socket.remoteAddress) + ': ' + message.utf8Data.slice(4));
-            }
-            else if (message.utf8Data.split(' ')[0] == '303'){
-              if (usernames.get(request.socket.remoteAddress) == undefined){
-                connection.sendUTF('303');
-              }
-            }
-            else {
-              console.log('Received Message From ' + request.socket.remoteAddress + ': ' + message.utf8Data);
+            var code = message.utf8Data.split(' ')[0];
+            var data = message.utf8Data.slice(code.length + 1);
+            var uname = usernames.get(request.socket.remoteAddress);
+            switch(code){
+              case '101':
+                console.log('Received Message From ' + request.socket.remoteAddress + ': ' + data);
+                usernames.set(request.socket.remoteAddress, data);
+                connection.sendUTF(data);
+                break;
+              case '202':
+                console.log('Received Message From ' + uname + ': ' + data);
+                wsServer.broadcast('304 ' + id++ + ' ' + uname + ': ' + data);
+                break;
+              case '303':
+                if (uname == undefined){
+                  connection.sendUTF('303');
+                }
+                break;
+              case '305':
+                console.log('Received Message From ' + uname + ': Request to delete: ' + data);
+                wsServer.broadcast('305 ' + data);
+                break;
+              default:
+                console.log('Received Message From ' + request.socket.remoteAddress + ': ' + data);
             }
         }
         else if (message.type === 'binary') {
