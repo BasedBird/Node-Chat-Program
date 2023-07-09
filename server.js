@@ -63,25 +63,25 @@ wsServer.on('request', function(request) {
             var uname = usernames.get(request.socket.remoteAddress);
             switch(code){
               case '101':
-                console.log('Received Message From ' + request.socket.remoteAddress + ': ' + data);
+                console.log('[101] From ' + request.socket.remoteAddress + ': ' + data);
                 usernames.set(request.socket.remoteAddress, data);
                 connection.sendUTF(data);
-                break;
-              case '202':
-                console.log('Received Message From ' + uname + ': ' + data);
-                wsServer.broadcast('304 ' + id++ + ' ' + uname + ': ' + data);
                 break;
               case '303':
                 if (uname == undefined){
                   connection.sendUTF('303');
                 }
                 break;
+              case '304':
+                console.log('[304] From ' + uname + ': ' + data);
+                wsServer.broadcast('304 ' + id++ + ' ' + uname + ': ' + data);
+                break;
               case '305':
-                console.log('Received Message From ' + uname + ': Request to delete: ' + data);
+                console.log('[305] From ' + uname + ': Request to delete: ' + data);
                 wsServer.broadcast('305 ' + data);
                 break;
               default:
-                console.log('Received Message From ' + request.socket.remoteAddress + ': ' + data);
+                console.log('[???] From ' + request.socket.remoteAddress + ': ' + data);
             }
         }
         else if (message.type === 'binary') {

@@ -59,11 +59,11 @@ document.addEventListener("keydown", function(event){
 });
 
 function hi_button(){
-  webSocket.send('202 ' + "hi");
+  webSocket.send('304 ' + "hi");
 }
 
 function bye_button(){
-  webSocket.send('202 ' + "bye");
+  webSocket.send('304 ' + 'bye');
 }
 
 function message_button(){
