@@ -8,6 +8,10 @@ webSocket.onopen = (event) => {
   webSocket.send("Connected");
 };
 
+webSocket.onclose = (event) => {
+  alert("connection lost :(");
+};
+
 webSocket.addEventListener("message", (event) => {
   window.location.replace("./chat");
 });

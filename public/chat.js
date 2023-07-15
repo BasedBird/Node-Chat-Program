@@ -14,6 +14,10 @@ webSocket.onopen = (event) => {document.body.write
   checkSignedIn();
 };
 
+webSocket.onclose = (event) => {
+  alert("connection lost :(");
+};
+
 webSocket.addEventListener("message", (event) => {
   if (event.data == '303') {
     window.location.replace("./");
