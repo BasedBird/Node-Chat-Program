@@ -3,11 +3,22 @@ var WebSocketServer = require('websocket').server;
 var http = require('http');
 const fs = require('fs');
 const sql_driver = require('./MysqlDriver');
+const Queue = require('./Queue');
 
 const _ROOT = "./public/";
 const PORT = 80;
 var usernames = new Map();
 var id = 0;
+
+var latest_messages = new Queue();
+sql_driver.fetchLatest(function(res){
+  res = res.reverse();
+  for (let i = 0; i<res.length; i++){
+    latest_messages.push([res[i][0], res[i][1]]);
+  }
+  console.log("Done fetching 20 latest messages");
+  console.log(latest_messages.all);
+})
 
 var server = http.createServer(function(request, response) {
     console.log((new Date()) + ' Received request for ' + request.url + "from " + request.socket.remoteAddress);
@@ -78,6 +89,8 @@ wsServer.on('request', function(request) {
               //chat message
               case '304':
                 console.log('[304] From ' + uname + ': ' + data);
+                latest_messages.pop();
+                latest_messages.push([uname, data]);
                 sql_driver.insertMessage(uname, data, id);
                 wsServer.broadcast('304 ' + id++ + ' ' + uname + ': ' + data);
                 break;
@@ -88,12 +101,10 @@ wsServer.on('request', function(request) {
                 break;
               //get recent messages
               case '306':
-                sql_driver.fetchLatest(function(res){
-                  res = res.reverse();
-                  for (let i = 0; i<res.length; i++){
-                    connection.sendUTF('304 ' + -1 + ' ' + res[i][0] + ': ' + res[i][1]);
-                  }
-                })
+                latest_20 = latest_messages.all;
+                for (let i = 0; i < latest_20.length; i++){
+                  connection.sendUTF('304 ' + -1 + ' ' + latest_20[i][0] + ': ' + latest_20[i][1]);
+                }
                 break;
               default:
                 console.log('[???] From ' + request.socket.remoteAddress + ': ' + data);
