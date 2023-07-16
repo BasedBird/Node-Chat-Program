@@ -8,10 +8,6 @@ webSocket.onopen = (event) => {
   webSocket.send("Connected");
 };
 
-webSocket.onclose = (event) => {
-  alert("connection lost :(");
-};
-
 webSocket.addEventListener("message", (event) => {
   window.location.replace("./chat");
 });
@@ -19,3 +15,4 @@ webSocket.addEventListener("message", (event) => {
 function submit(){
   webSocket.send('101 ' + document.getElementById('uname').value);
 }
+

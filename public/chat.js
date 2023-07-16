@@ -12,10 +12,7 @@ webSocket = new WebSocket('ws://45.72.220.8/', 'echo-protocol');
 
 webSocket.onopen = (event) => {document.body.write
   checkSignedIn();
-};
-
-webSocket.onclose = (event) => {
-  alert("connection lost :(");
+  webSocket.send('306');
 };
 
 webSocket.addEventListener("message", (event) => {

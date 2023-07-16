@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 var WebSocketServer = require('websocket').server;
 var http = require('http');
-const fs = require('fs')
+const fs = require('fs');
+const sql_driver = require('./MysqlDriver');
 
 const _ROOT = "./public/";
 const PORT = 80;
@@ -62,23 +63,37 @@ wsServer.on('request', function(request) {
             var data = message.utf8Data.slice(code.length + 1);
             var uname = usernames.get(request.socket.remoteAddress);
             switch(code){
+              //sign in 
               case '101':
                 console.log('[101] From ' + request.socket.remoteAddress + ': ' + data);
                 usernames.set(request.socket.remoteAddress, data);
                 connection.sendUTF(data);
                 break;
+              //redirect to sign in page if not signed in
               case '303':
                 if (uname == undefined){
                   connection.sendUTF('303');
                 }
                 break;
+              //chat message
               case '304':
                 console.log('[304] From ' + uname + ': ' + data);
+                sql_driver.insertMessage(uname, data, id);
                 wsServer.broadcast('304 ' + id++ + ' ' + uname + ': ' + data);
                 break;
+              //delete message
               case '305':
                 console.log('[305] From ' + uname + ': Request to delete: ' + data);
                 wsServer.broadcast('305 ' + data);
+                break;
+              //get recent messages
+              case '306':
+                sql_driver.fetchLatest(function(res){
+                  res = res.reverse();
+                  for (let i = 0; i<res.length; i++){
+                    connection.sendUTF('304 ' + -1 + ' ' + res[i][0] + ': ' + res[i][1]);
+                  }
+                })
                 break;
               default:
                 console.log('[???] From ' + request.socket.remoteAddress + ': ' + data);
