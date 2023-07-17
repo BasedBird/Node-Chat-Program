@@ -8,17 +8,19 @@ const Queue = require('./Queue');
 const _ROOT = "./public/";
 const PORT = 80;
 var usernames = new Map();
-var id = 0;
-
 var latest_messages = new Queue();
-sql_driver.fetchLatest(function(res){
-  res = res.reverse();
-  for (let i = 0; i<res.length; i++){
-    latest_messages.push([res[i][0], res[i][1]]);
-  }
-  console.log("Done fetching 20 latest messages");
-  console.log(latest_messages.all);
-})
+
+sql_driver.fetchLatest().then(
+  resolve => {
+    let lst = resolve.reverse();
+    for (let i = 0; i<lst.length; i++){
+      latest_messages.push([lst[i][0], lst[i][1], lst[i][2]]);
+    }
+    console.log("Done fetching 20 latest messages");
+    console.log(latest_messages.all);
+  },
+  reject => {}//pass
+);
 
 var server = http.createServer(function(request, response) {
     console.log((new Date()) + ' Received request for ' + request.url + "from " + request.socket.remoteAddress);
@@ -71,7 +73,7 @@ wsServer.on('request', function(request) {
     connection.on('message', function(message) {
         if (message.type === 'utf8') {
             var code = message.utf8Data.split(' ')[0];
-            var data = message.utf8Data.slice(code.length + 1);
+            var data = message.utf8Data.slice(code.length).trim();
             var uname = usernames.get(request.socket.remoteAddress);
             switch(code){
               //sign in 
@@ -88,11 +90,16 @@ wsServer.on('request', function(request) {
                 break;
               //chat message
               case '304':
-                console.log('[304] From ' + uname + ': ' + data);
-                latest_messages.pop();
-                latest_messages.push([uname, data]);
-                sql_driver.insertMessage(uname, data, id);
-                wsServer.broadcast('304 ' + id++ + ' ' + uname + ': ' + data);
+                let parse = data.split(' ');
+                let id = parse[0];
+                let content = data.slice(id.length).trim();
+                let hashID;
+                console.log('[304] From ' + uname + ': ' + content);
+                hashedID = sql_driver.insertMessage(uname, id, content);
+                if (latest_messages.size >= 20) latest_messages.pop();
+                latest_messages.push([uname, content, hashedID]);
+                wsServer.broadcast('304-1 ' + hashedID);
+                wsServer.broadcast('304-2 ' + uname + ': ' + content);
                 break;
               //delete message
               case '305':
@@ -103,7 +110,10 @@ wsServer.on('request', function(request) {
               case '306':
                 latest_20 = latest_messages.all;
                 for (let i = 0; i < latest_20.length; i++){
-                  connection.sendUTF('304 ' + -1 + ' ' + latest_20[i][0] + ': ' + latest_20[i][1]);
+                  let id = latest_20[i][2];
+                  let content = latest_20[i][0] + ': ' + latest_20[i][1];
+                  connection.sendUTF('304-1 ' + id);
+                  connection.sendUTF('304-2 ' + content);
                 }
                 break;
               default:

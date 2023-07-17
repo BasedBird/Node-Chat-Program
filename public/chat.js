@@ -1,4 +1,5 @@
-var currNode = null;
+var id = 0;
+var hashedID;
 
 if ( window.history.replaceState ) {
   window.history.replaceState( null, null, window.location.href );
@@ -21,13 +22,15 @@ webSocket.addEventListener("message", (event) => {
   }
   else{
     var code = event.data.split(' ')[0];
-    var data = event.data.slice(code.length+1);
+    var data = event.data.slice(code.length).trim();
     switch(code) {
-      case '304':
-        var id = data.split(' ')[0];
+      case '304-1':
+        hashedID = data;
+        break;
+      case '304-2':
         var parent = document.getElementById('chat');
         var newDiv = document.createElement('div');
-        var newContent = document.createTextNode(data.slice(id.length+1));
+        var newContent = document.createTextNode(data.slice(id.length).trim());
         var newButton = document.createElement('button');
         newButton.type = "button";
         newButton.innerHTML = "Delete";
@@ -35,7 +38,7 @@ webSocket.addEventListener("message", (event) => {
           webSocket.send('305 ' + e.target.parentNode.id);
         });
 
-        newDiv.setAttribute('id', id);
+        newDiv.setAttribute('id', hashedID);
         newDiv.appendChild(newContent);
         newDiv.appendChild(newButton);
         parent.appendChild(newDiv);
@@ -60,15 +63,15 @@ document.addEventListener("keydown", function(event){
 });
 
 function hi_button(){
-  webSocket.send('304 ' + "hi");
+  webSocket.send('304 ' + id + ' hi');
 }
 
 function bye_button(){
-  webSocket.send('304 ' + 'bye');
+  webSocket.send('304 ' + id + ' bye');
 }
 
 function message_button(){
-  webSocket.send('304 ' + document.getElementById('message').value);
+  webSocket.send('304 ' + id + ' ' + document.getElementById('message').value);
   document.getElementById("message").value = '';
   document.getElementById("message").focus();
 }
