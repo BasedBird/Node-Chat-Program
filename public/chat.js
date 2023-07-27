@@ -63,15 +63,15 @@ document.addEventListener("keydown", function(event){
 });
 
 function hi_button(){
-  webSocket.send('304 ' + id + ' hi');
+  webSocket.send('304 ' + id++ + ' hi');
 }
 
 function bye_button(){
-  webSocket.send('304 ' + id + ' bye');
+  webSocket.send('304 ' + id++ + ' bye');
 }
 
 function message_button(){
-  webSocket.send('304 ' + id + ' ' + document.getElementById('message').value);
+  webSocket.send('304 ' + id++ + ' ' + document.getElementById('message').value);
   document.getElementById("message").value = '';
   document.getElementById("message").focus();
 }
