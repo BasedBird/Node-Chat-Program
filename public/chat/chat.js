@@ -9,7 +9,7 @@ window.onload = function() {
   document.getElementById("message").focus();
 }
 
-webSocket = new WebSocket('ws://45.72.220.8/', 'echo-protocol');
+webSocket = new WebSocket('ws://pongcord.mooo.com/', 'echo-protocol');
 
 webSocket.onopen = (event) => {document.body.write
   checkSignedIn();
