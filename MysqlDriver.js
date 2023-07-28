@@ -1,12 +1,22 @@
 var mysql = require('mysql');
+const fs = require('fs');
 const {createHash} = require('node:crypto');
+var temp = [];
+try {
+  const data = fs.readFileSync('sql.txt');
+  temp = data.toString().split('\n');
+  for (str in temp) {
+    temp[str] = temp[str].replace(/[\n\r]/g, '');
+  }
+} catch (err) {
+  console.error(err);
+}
 
 var con = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "3240",
-  database: "test"
-
+  password: temp[0],
+  database: temp[1]
 });
 var d = new Date();
 
