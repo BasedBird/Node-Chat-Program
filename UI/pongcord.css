@@ -1,0 +1,175 @@
+*
+{
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+    font-family: 'Roboto Mono', monospace;
+
+}
+
+body
+{
+    background: #98B7BE;
+
+
+}
+
+.text
+{
+    color: #000;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+body::-webkit-scrollbar 
+{
+    width: 0.25rem;
+}
+  
+body::-webkit-scrollbar-track 
+{
+    background: #819BA2;
+}
+  
+body::-webkit-scrollbar-thumb 
+{
+    background: white;
+}
+
+#sidebar
+{
+    text-align: center;
+    width: 12rem;
+    height: 100vh;
+    position: fixed;
+
+    border-right: 10px solid  #819BA2;
+    
+
+
+    
+
+}
+
+#igloo
+{
+    margin-top: 10%;
+}
+
+#title
+{
+    font-size: 4rem;
+    color: white;
+    text-align: center;
+    height: 7.125rem;
+    margin-bottom: 2%;
+    max-width: 100%;
+    flex-grow: 100;
+ 
+
+    border-style: solid;
+    border-width: 5px;
+    border-color: #819BA2;
+}
+
+#userinfo
+{
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+#textarea{
+    width: 71.3125rem;
+    height: 4.6875rem;
+    border-radius: 1.25rem;
+    border: 1px solid #000;
+    background: #F4F5F6;
+    text-align: center;
+
+
+}
+
+button
+{
+    transition-duration: 0.4s;
+    margin-left: 2%;
+}
+
+#buttons
+{
+    margin-top: 2rem;
+    margin-left: 25rem;
+    gap: 12px;
+    justify-content: center;
+}
+
+button:hover
+{
+    background-color: #819BA2;
+}
+
+#hi
+{
+    width: 6.5rem;
+    height: 3.25rem;
+    border: none;
+    border-radius: 8px;
+    fill: #BED6DB;
+
+}
+
+#bye
+{
+    width: 6.5rem;
+    height: 3.25rem;
+    border: none;
+    border-radius: 8px;
+    fill: #BED6DB;
+
+}
+
+.chat
+{
+    margin-left: 12rem;
+    overflow: hidden;
+ 
+}
+
+#user
+{
+    margin-bottom: 1%;
+}
+
+#username
+{
+   float: left;
+   
+}
+
+#time
+{
+    margin-left: 5rem;
+
+     
+}
+
+.text
+{
+    margin-top: 0.5rem;
+    margin-left: 8rem;
+
+}
+
+#penguin
+{
+    float: left;
+
+}
+#chatinput
+{
+    margin-left: 30vh;
+    margin-top: 55vh;
+
+}
+
